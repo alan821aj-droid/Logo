@@ -1,0 +1,118 @@
+local LoggyHub = {}
+
+function LoggyHub.Load()
+    local TweenService = game:GetService("TweenService")
+    local player = game:GetService("Players").LocalPlayer
+    local gui = Instance.new("ScreenGui")
+    gui.IgnoreGuiInset = true
+    gui.Name = "LoggyLoading"
+    gui.Parent = player:WaitForChild("PlayerGui")
+
+    -- Background Gradient
+    local bg = Instance.new("Frame")
+    bg.Size = UDim2.fromScale(1,1)
+    bg.BackgroundTransparency = 0
+    bg.Parent = gui
+
+    local gradient = Instance.new("UIGradient")
+    gradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 70, 150)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 200, 255))
+    }
+    gradient.Rotation = 45
+    gradient.Parent = bg
+
+    -- Title
+    local title = Instance.new("TextLabel")
+    title.Size = UDim2.new(1,0,0,60)
+    title.Position = UDim2.new(0,0,0.2,0)
+    title.BackgroundTransparency = 1
+    title.TextColor3 = Color3.fromRGB(255,255,255)
+    title.Font = Enum.Font.FredokaOne
+    title.TextSize = 38
+    title.TextStrokeTransparency = 0.3
+    title.Text = "✨ Loggy HUB V2 | Loader ✨"
+    title.Parent = bg
+
+    -- Progress Bar Background
+    local back = Instance.new("Frame")
+    back.Size = UDim2.new(0,420,0,28)
+    back.Position = UDim2.new(0.5,-210,0.5,-14)
+    back.BackgroundColor3 = Color3.fromRGB(30,30,30)
+    back.BorderSizePixel = 0
+    back.Parent = bg
+    Instance.new("UICorner", back).CornerRadius = UDim.new(0,14)
+
+    -- Progress Fill
+    local fill = Instance.new("Frame")
+    fill.Size = UDim2.fromScale(0,1)
+    fill.BackgroundColor3 = Color3.fromRGB(0,255,170)
+    fill.BorderSizePixel = 0
+    fill.Parent = back
+    Instance.new("UICorner", fill).CornerRadius = UDim.new(0,14)
+
+    -- Percentage
+    local percent = Instance.new("TextLabel")
+    percent.Size = UDim2.new(1,0,0,30)
+    percent.Position = UDim2.new(0,0,0.65,0)
+    percent.BackgroundTransparency = 1
+    percent.TextColor3 = Color3.fromRGB(255,255,255)
+    percent.Font = Enum.Font.FredokaOne
+    percent.TextSize = 26
+    percent.Text = "0%"
+    percent.Parent = bg
+
+    -- Stars Animation
+    for s = 1, 15 do
+        local star = Instance.new("TextLabel")
+        star.Size = UDim2.new(0,24,0,24)
+        star.Position = UDim2.new(math.random(),0,math.random(),0)
+        star.BackgroundTransparency = 1
+        star.Text = "⭐"
+        star.TextColor3 = Color3.fromRGB(255,255,120)
+        star.Font = Enum.Font.FredokaOne
+        star.TextSize = 18
+        star.Parent = bg
+
+        TweenService:Create(
+            star,
+            TweenInfo.new(3, Enum.EasingStyle.Sine, Enum.EasingDirection.Out, -1, true),
+            {TextTransparency = 1}
+        ):Play()
+    end
+
+    -- Loading Animation (5 mins total)
+    for i = 1,100 do
+        TweenService:Create(
+            fill,
+            TweenInfo.new(2.8, Enum.EasingStyle.Linear),
+            {Size = UDim2.fromScale(i/100,1)}
+        ):Play()
+        percent.Text = i.."%"
+        wait(3) -- ~5 minutes in total
+    end
+
+    -- Show Continue Button
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(0,180,0,50)
+    btn.Position = UDim2.new(0.5,-90,0.7,0)
+    btn.BackgroundColor3 = Color3.fromRGB(0,200,100)
+    btn.TextColor3 = Color3.fromRGB(255,255,255)
+    btn.Font = Enum.Font.FredokaOne
+    btn.TextSize = 22
+    btn.Text = "✅ Continue"
+    btn.Visible = false
+    btn.Parent = bg
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0,12)
+
+    btn.Visible = true
+    btn.MouseButton1Click:Connect(function()
+        btn.Text = "⏳ Bypassing..."
+        btn.Active = false
+        TweenService:Create(btn, TweenInfo.new(0.5), {BackgroundColor3 = Color3.fromRGB(200,200,200)}):Play()
+        wait(300) -- wait 5 minutes
+        gui:Destroy() -- closes loader
+    end)
+end
+
+return LoggyHub
